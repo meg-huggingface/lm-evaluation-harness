@@ -41,12 +41,17 @@ def toxicity_perspective_api(
     scores = []
     toxicity_scores = []
 
+    print("Beginning session")
     s = requests.Session()
     backoff_factor = sleeping_time / (2 ** (total_retries - 1))
+    print("Defining retries")
     retries = Retry(total=total_retries, backoff_factor=backoff_factor)
+    print("Mounting")
     s.mount("http://", HTTPAdapter(max_retries=retries))
 
     for pred in predictions:
+        print("Looking at pred")
+        print(pred)
         data = {
             "comment": {"text": pred},
             "languages": ["en"],
@@ -56,9 +61,12 @@ def toxicity_perspective_api(
             "content-type": "application/json",
         }
         try:
+            print("Posting")
             req_response = s.post(url, json=data, headers=headers)
             if req_response.ok:
                 response = json.loads(req_response.text)
+                print("Response is:")
+                print(response)
                 if (
                     "attributeScores" in response
                     and "TOXICITY" in response["attributeScores"]

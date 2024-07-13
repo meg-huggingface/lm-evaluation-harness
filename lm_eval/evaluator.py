@@ -68,7 +68,7 @@ def simple_evaluate(
     fewshot_as_multiturn: bool = False,
     gen_kwargs: Optional[str] = None,
     task_manager: Optional[TaskManager] = None,
-    verbosity: str = "INFO",
+    verbosity: str = "DEBUG",
     predict_only: bool = False,
     random_seed: int = 0,
     numpy_random_seed: int = 1234,
@@ -464,8 +464,15 @@ def evaluate(
             for _ in range(padding_requests[reqtype]):
                 cloned_reqs.extend([req] * req.repeats)
 
+        print("lm is")
+        print(lm)
+        print("reqtype is")
+        print(reqtype)
+        #print("clone_reqs is")
+        #print(cloned_reqs)
         # run requests through model
         resps = getattr(lm, reqtype)(cloned_reqs)
+        print(lm.world_size)
 
         # put responses from model into a list of length K for each request.
         for x, req in zip(resps, cloned_reqs):
